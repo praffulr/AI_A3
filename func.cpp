@@ -11,7 +11,7 @@ void oneOneMap(int n1, int n2, ofstream * satinput){
 	for(int i = 0; i<n1; i++){
 		for(int j = 0; j < n2; j++){
 			for(int k = j+1; k < n2; k++){
-				*satinput << i*n2 + j + 1<< " " << i*n2 + k + 1 << " 0\n"; 
+				*satinput << -(i*n2 + j + 1)<< " " << -(i*n2 + k + 1) << " 0\n"; 
 			}
 		}
 
@@ -25,7 +25,7 @@ void oneOneMap(int n1, int n2, ofstream * satinput){
 	for(int j = 0; j<n2; j++){
 		for(int i = 0; i < n1; i++){
 			for(int k = i+1; k < n1; k++){
-				*satinput << i*n2 + j + 1 << " " << k*n2 + j + 1 << " 0\n"; 
+				*satinput << -(i*n2 + j + 1) << " " << -(k*n2 + j + 1) << " 0\n"; 
 			}
 		}
 	}
@@ -47,7 +47,7 @@ void edgeCondition(vector<short> &e1, vector<short> & e2, ofstream * satinput){
 					//if(k == l) continue;
 					if((k == l) || (e1[i, j] && e2[k, l]) || (!e1[i, j] && !e2[k, l])) continue;
 					
-					*satinput << i*n2+k + 1 << " " << j*n2 + l + 1 << " 0\n"; 
+					*satinput << -(i*n2+k + 1) << " " << -(j*n2 + l + 1) << " 0\n"; 
 				}
 			}
 		}
