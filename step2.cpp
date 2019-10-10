@@ -1,4 +1,11 @@
-#include <bits/stdc++.h>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
 
 using namespace std;
 
@@ -16,7 +23,7 @@ int main(int argc, char* argv[])
 	int n1, n2;
 	data >> n1 >> n2;
 	data.close();
-	
+
 	ifstream satoutput;
 	satoutput.open(test + ".satoutput");
 	ofstream mappingFile;
@@ -27,7 +34,7 @@ int main(int argc, char* argv[])
 	if(sat != "SAT"){
 		mappingFile << "0";
 		mappingFile.close();
-	} 
+	}
 
 	int mapping[n1];
 	int literal;
@@ -35,6 +42,7 @@ int main(int argc, char* argv[])
 	{
 		satoutput >> literal;
 		if(literal == 0) break;
+		if(literal < 0) continue;
 		int i = (literal - 1)/n2, j = (literal - 1)%n2;
 		mapping[i] = j;
 	}
@@ -43,6 +51,6 @@ int main(int argc, char* argv[])
 		mappingFile << (i+1) << " " << mapping[i] + 1 << "\n";
 	}
 
-	mappingFile.close();	
+	mappingFile.close();
 	return 0;
 }

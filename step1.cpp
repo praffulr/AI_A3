@@ -1,10 +1,20 @@
-#include <bits/stdc++.h>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+
 using namespace std;
-void edgeCondition(vector<vector<short>> &e1, vector<vector<short>> & e2, fstream * satinput);
-void oneOneMap(int n1, int n2, fstream * satinput);
+void edgeCondition(vector<vector<short>> &e1, vector<vector<short>> & e2, ofstream * satinput);
+void oneOneMap(int n1, int n2, ofstream * satinput);
+
 
 int main(int argc, char* argv[])
 {
+
   fstream file;
   string input_file;
   string test(argv[1]);
@@ -17,27 +27,27 @@ int main(int argc, char* argv[])
   //find n1 and n2
   while(file)
   {
-	file>>parse;
-	if(parse != 0)
-	{
-	  e2++;
-	  if(parse>n2) n2 = parse;
-	}
-	else
-	{
-	  file>>parse;
-	  if(parse == 0) break;
-	}
+  	file>>parse;
+  	if(parse != 0)
+  	{
+  	  e2++;
+  	  if(parse>n2) n2 = parse;
+  	}
+  	else
+  	{
+  	  file>>parse;
+  	  if(parse == 0) break;
+  	}
   }
   e2 /= 2;
   while(file)
   {
-	file>>parse;
-	if(parse != 0)
-	{
-	  e1++;
-	  if(parse>n1) n1 = parse;
-	}
+  	file>>parse;
+  	if(parse != 0)
+  	{
+  	  e1++;
+  	  if(parse>n1) n1 = parse;
+  	}
   }
   e1 /= 2;
   file.close();
@@ -46,41 +56,39 @@ int main(int argc, char* argv[])
   file.open(input_file);
   while(file)
   {
-	file >> parse;
-	if(parse != 0)
-	{
-	  int x = parse;
-	  file >> parse;
-	  E2[x-1][parse-1] = 1;
-	}
-	else
-	{
-	  file >> parse;
-	  if (parse == 0)
-	  {
-		break;
-	  }
-	  else
-	  {
-		cout << "improper input file-E2" << endl;
-	  }
-	}
+  	file >> parse;
+  	if(parse != 0)
+  	{
+  	  int x = parse;
+  	  file >> parse;
+  	  E2[x-1][parse-1] = 1;
+  	}
+  	else
+  	{
+  	  file >> parse;
+  	  if (parse == 0)
+  	  {
+  		    break;
+  	  }
+  	  else
+  	  {
+  		    cout << "improper input file-E2" << endl;
+  	  }
+  	}
   }
   while(file)
   {
-	file >> parse;
-	int x = parse;
-	if(!file) break;
-	file >> parse;
-	if(parse != 0)
-	{
-	  E1[x-1][parse-1] = 1;
-	}
+  	file >> parse;
+  	int x = parse;
+  	if(!file) break;
+  	file >> parse;
+  	if(parse != 0)
+  	{
+  	  E1[x-1][parse-1] = 1;
+  	}
   }
   file.close();
-
-	fstream data;
-	data.open(test+".data");
+	ofstream data(test+".data");
 	data << n1 << " " << n2;
 	data.close();
 
@@ -99,19 +107,24 @@ int main(int argc, char* argv[])
 
   bool M[n1][n2];
   int num_var = n1*n2;
-  int num_clauses = (n1*n2*(n1+n2-2))/2 + e1*n2*(n2-1)/2 - e2*n1*(n1-1)/2 - 2*e1*e2;
+  // cout << e1 <<" " << e2 << endl;
+  int num_clauses = n1 + (n1*n2*(n1+n2-2))/2 + (e1*(n2*n2 - e2 - n2)) + (e2*(n1*n1 - e1 - n1)) ;
 
   temp_string = ".satinput";
   string output_file = argv[1]+temp_string;
-  file.open(output_file);
-  file << "p cnf " << num_var << " " << num_clauses << endl;
+  ofstream file1;
+  file1.open(output_file);
+  file1 << "p cnf " << num_var << " " << num_clauses << endl;
+  //cout << "p cnf " << num_var << " " << num_clauses << endl;
   //write constraints to satinput file
-  oneOneMap(n1, n2, &file);
-  edgeCondition(E1, E2, &file);
+  oneOneMap(n1, n2, &file1);
+  edgeCondition(E1, E2, &file1);
+  file1.close();
   return 0;
 }
 
-void oneOneMap(int n1, int n2, fstream * satinput){
+void oneOneMap(int n1, int n2, ofstream * satinput){
+  int c1 = 0;
 	// ofstream satinput;
 	// satinput.open(test + ".satinput");
 
@@ -120,34 +133,38 @@ void oneOneMap(int n1, int n2, fstream * satinput){
 	for(int i = 0; i<n1; i++){
 		for(int j = 0; j < n2; j++){
 			for(int k = j+1; k < n2; k++){
-				*satinput << -(i*n2 + j + 1)<< " " << -(i*n2 + k + 1) << " 0\n"; 
+				*satinput << -1*(i*n2 + j + 1)<< " " << -1*(i*n2 + k + 1) << " 0\n";
+        c1++;
 			}
 		}
 
 		for(int j = 0 ; j < n2; j++){
-			*satinput << i*n2 + j + 1 << " "; 
+			*satinput << i*n2 + j + 1 << " ";
 		}
 		*satinput << "0\n";
+    c1++;
 	}
-
+  cout << c1 << endl;
 	//j in G' is mapped to atmax one i in G
+  int c2 = 0;
 	for(int j = 0; j<n2; j++){
 		for(int i = 0; i < n1; i++){
 			for(int k = i+1; k < n1; k++){
-				*satinput << -(i*n2 + j + 1) << " " << -(k*n2 + j + 1) << " 0\n"; 
+				*satinput << -1*(i*n2 + j + 1) << " " << -1*(k*n2 + j + 1) << " 0\n";
+        c2++;
 			}
 		}
 	}
+  cout << c2 << endl;
 
 	//satinput.close();
 }
 
-void edgeCondition(vector<vector<short>> &e1, vector<vector<short>> & e2, fstream * satinput){
+void edgeCondition(vector<vector<short>> &e1, vector<vector<short>> &e2, ofstream * satinput){
 	// ofstream satinput;
 	// satinput.open(test + ".satinput");
-
+  int c3 = 0;
 	int n1 = e1.size(), n2 = e2.size();
-
 	for(int i = 0; i < n1; i++){
 		for(int j = 0; j < n1; j++){
 			if(i == j) continue;
@@ -155,12 +172,12 @@ void edgeCondition(vector<vector<short>> &e1, vector<vector<short>> & e2, fstrea
 				for(int l = 0; l < n2; l++){
 					//if(k == l) continue;
 					if((k == l) || (e1[i][j] && e2[k][l]) || (!e1[i][j] && !e2[k][l])) continue;
-					
-					*satinput << -(i*n2+k + 1) << " " << -(j*n2 + l + 1) << " 0\n"; 
+
+					*satinput << -1*(i*n2+k + 1) << " " << -1*(j*n2 + l + 1) << " 0\n";
+          c3++;
 				}
 			}
 		}
 	}
-
-	(*satinput).close();
+  cout << c3<< endl;
 }
